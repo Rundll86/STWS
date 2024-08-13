@@ -14,7 +14,7 @@ public partial class EntityController : CharacterBody2D
 	}
 	public override void _Process(double delta)
 	{
-		if (Blocker.IsBlocked())
+		if (Blocker.IsTimePaused())
 		{
 			texture.Pause();
 			return;
@@ -48,28 +48,38 @@ public partial class EntityController : CharacterBody2D
 			{
 				KinematicCollision2D result = MoveAndCollide(new Vector2(-5, 0));
 				if (result != null) { collided = result; }
-				texture.Scale = new Vector2(2, 2);
+				texture.Scale = new Vector2(Math.Abs(texture.Scale.X), texture.Scale.Y);
 				moved = true;
 			}
 			if (Input.IsActionPressed("move_right"))
 			{
 				KinematicCollision2D result = MoveAndCollide(new Vector2(5, 0));
 				if (result != null) { collided = result; }
-				texture.Scale = new Vector2(-2, 2);
+				texture.Scale = new Vector2(-Math.Abs(texture.Scale.X), texture.Scale.Y);
 				moved = true;
 			}
 			if (collided != null)
 			{
-				CharacterBody2D result = collided.GetCollider() as CharacterBody2D;
+				PhysicsBody2D result = collided.GetCollider() as PhysicsBody2D;
 				string resultName = result.Name.ToString();
-				int index = int.Parse(resultName[^1].ToString());
 				if (resultName.StartsWith("Window"))
 				{
+					int index = int.Parse(resultName[^1].ToString());
 					Message.ShowMessage(
 						"order",
 						"要在" + index + "号窗口点餐吗？",
 						new string[] { "开始点餐", "再等等" },
 						index - 1
+					);
+				}
+				else if (resultName.StartsWith("Chair"))
+				{
+					string numberA = result.GetParent<Node2D>().Name.ToString()[^1].ToString();
+					string numberB = resultName[^1].ToString();
+					Message.ShowMessage(
+						"eat",
+						"要在座位" + numberB + numberA + "用餐吗？",
+						new string[] { "开始用餐", "换一个座位" }
 					);
 				}
 			}

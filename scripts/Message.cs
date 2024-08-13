@@ -66,7 +66,7 @@ public partial class Message : Sprite2D
             currentRect.AddChild(currentLabel);
             MsgBox.AddChild(currentRect);
         }
-        Blocker.Block();
+        Blocker.PauseTime();
         isShowing = true;
         lastId = id;
         lastShowingCount = options?.Length ?? 0;
@@ -78,7 +78,7 @@ public partial class Message : Sprite2D
         GD.Print("HideMessage:" + TextRenderer.Text);
         TextRenderer.Text = "";
         MsgBox.Visible = false;
-        Blocker.Unblock();
+        Blocker.ResumeTime();
         Godot.Collections.Array<Node> children = MsgBox.GetChildren();
         children.RemoveAt(0);
         for (int i = 0; i < children.Count; i++)
@@ -102,10 +102,28 @@ public partial class Message : Sprite2D
                 GD.Print("取消点菜");
             }
         }
-        else
+        else if (lastId == "eat")
         {
-            GD.Print("LastID:" + lastId);
-            GD.Print("ProcessSelectedOption:" + selected);
+            if (arg == 1 && selected != UserData.RealHadFoodsLength)
+            {
+                UserData.HadFoods = Common.RemoveItemFromArray(UserData.HadFoods, UserData.HadFoods[selected]);
+            }
+            if (selected == 0)
+            {
+                GD.Print("开始用餐");
+                string[] options = new string[UserData.RealHadFoodsLength + 1];
+                for (int i = 0; i < options.Length - 1; i++)
+                {
+                    GD.Print(i + " " + options.Length + " " + UserData.HadFoods[i]);
+                    options[i] = "吃掉「" + UserData.HadFoods[i].name + "」";
+                }
+                options[options.Length - 1] = "暂停用餐";
+                ShowMessage("eat", "享受美食！", options, 1);
+            }
+            else if (selected == 1)
+            {
+                GD.Print("取消用餐");
+            }
         }
     }
 }

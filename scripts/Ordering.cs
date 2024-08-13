@@ -1,15 +1,15 @@
 using Godot;
 using System;
+using System.Linq;
 
 public partial class Ordering : ScrollController
 {
-	Label BoughtFoodLabel;
 	static ScrollController OrderUI;
 	static Food[] LastOpenCards;
 	public override void _Ready()
 	{
 		OrderUI = this;
-		BoughtFoodLabel = GetNode<Label>("BoughtFoodList");
+		LastOpenCards = Array.Empty<Food>();
 	}
 	public override void _Input(InputEvent @event)
 	{
@@ -28,26 +28,36 @@ public partial class Ordering : ScrollController
 					GD.Print("Clicked: " + LastOpenCards[i].name);
 					if (UserData.TotalPrice + LastOpenCards[i].price > UserData.Money)
 					{
-						Message.ShowMessage("notEnoughMoney", "你钱不够了！");
+						Message.ShowMessage("notEnoughMoney", "你可没有那么多钱！");
 						return;
 					}
 					if (UserData.RealOrderedLength == 10)
 					{
-						Message.ShowMessage("tooMuchItems", "你点的菜太多了！");
+						Message.ShowMessage("tooMuchItems", "你选择的食物太多了！");
 						return;
 					}
 					UserData.Ordered[UserData.RealOrderedLength] = LastOpenCards[i];
-					BoughtFoodLabel.Text = "已购买：" + UserData.BoughtFoodNames;
 					GD.Print("Ordered: " + LastOpenCards[i].name);
 				}
 			}
 		}
 	}
+	public static void Buy()
+	{
+		if (UserData.RealOrderedLength == 0)
+		{
+			Message.ShowMessage("noFood", "你还没有选择任何食物！");
+			return;
+		}
+		UserData.Money -= UserData.TotalPrice;
+		UserData.HadFoods = UserData.HadFoods.Concat(UserData.Ordered).ToArray();
+		UserData.Ordered = new Food[10];
+	}
 	public static void Close()
 	{
 		OrderUI.Visible = false;
 		Blocker.Unblock();
-		Common.MoneyLabel.Position = new Vector2(-56, 53);
+		Common.MoneyLabel.Position = Common.MoneyLabelOldPosition;
 		LastOpenCards = null;
 		Godot.Collections.Array<Node> children = OrderUI.GetChildren();
 		for (int i = 0; i < 3; i++)
@@ -61,7 +71,7 @@ public partial class Ordering : ScrollController
 	}
 	public static void Open(int index)
 	{
-		Common.MoneyLabel.Position = new Vector2(-510, -332);
+		Common.MoneyLabel.Position = new Vector2(-533, -300);
 		Blocker.Block();
 		OrderUI.Visible = true;
 		Food[] foods = Common.RandomFoodList[index];

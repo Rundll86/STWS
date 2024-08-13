@@ -10,6 +10,6 @@ public partial class OrderingBuyButton : Button
 	void OnPressed()
 	{
 		Ordering.Close();
-		UserData.Money -= UserData.TotalPrice;
+		Ordering.Buy();
 	}
 }
