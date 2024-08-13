@@ -48,13 +48,7 @@ public partial class Ordering : ScrollController
 		OrderUI.Visible = false;
 		Blocker.Unblock();
 		Common.MoneyLabel.Position = new Vector2(-56, 53);
-	}
-	public static void Open(int index)
-	{
-		Common.MoneyLabel.Position = new Vector2(-510, -332);
-		Blocker.Block();
-		OrderUI.Visible = true;
-		OrderUI.MinOffset.Y = -360 - (index - 2) * 330;
+		LastOpenCards = null;
 		Godot.Collections.Array<Node> children = OrderUI.GetChildren();
 		for (int i = 0; i < 3; i++)
 		{
@@ -64,8 +58,14 @@ public partial class Ordering : ScrollController
 		{
 			child.QueueFree();
 		}
+	}
+	public static void Open(int index)
+	{
+		Common.MoneyLabel.Position = new Vector2(-510, -332);
+		Blocker.Block();
+		OrderUI.Visible = true;
 		Food[] foods = Common.RandomFoodList[index];
-		GD.Print(foods.Length);
+		OrderUI.MinOffset.Y = -360 - (foods.Length - 2) * 330;
 		LastOpenCards = foods;
 		for (int i = 0; i < foods.Length; i++)
 		{
@@ -142,6 +142,5 @@ public partial class Ordering : ScrollController
 			);
 			OrderUI.AddChild(container);
 		}
-		children = OrderUI.GetChildren();
 	}
 }
