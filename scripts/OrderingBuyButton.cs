@@ -9,6 +9,7 @@ public partial class OrderingBuyButton : Button
 	}
 	void OnPressed()
 	{
-		Common.SceneTree.ChangeSceneToFile("res://main.tscn");
+		Ordering.Close();
+		UserData.Money -= UserData.TotalPrice;
 	}
 }

@@ -3,27 +3,40 @@ using System;
 
 public partial class ScrollController : PositionLock
 {
-    ScrollController InstanceMe;
     [Export]
-    float ScrollSpeed;
-    public void SetInstanceMe(ScrollController scrollController)
-    {
-        InstanceMe = scrollController;
-    }
+    Vector2 ScrollSpeed;
+    [Export]
+    Vector2 MaxOffset;
+    [Export]
+    public Vector2 MinOffset;
     public override void _Input(InputEvent @event)
     {
         if (@event is InputEventMouseButton mouseEvent)
         {
             if (mouseEvent.ButtonIndex == MouseButton.WheelUp)
             {
-                GD.Print("ScrollDown:" + this);
-                InstanceMe.Position += new Vector2(0, InstanceMe.ScrollSpeed);
+                offset += ScrollSpeed;
             }
             else if (mouseEvent.ButtonIndex == MouseButton.WheelDown)
             {
-                GD.Print("ScrollUp:" + this);
-                InstanceMe.Position += new Vector2(0, -InstanceMe.ScrollSpeed);
+                offset -= ScrollSpeed;
             }
+        }
+        if (offset.Y > MaxOffset.Y)
+        {
+            offset.Y = MaxOffset.Y;
+        }
+        if (offset.Y < MinOffset.Y)
+        {
+            offset.Y = MinOffset.Y;
+        }
+        if (offset.X > MaxOffset.X)
+        {
+            offset.X = MaxOffset.X;
+        }
+        if (offset.X < MinOffset.X)
+        {
+            offset.X = MinOffset.X;
         }
     }
 }

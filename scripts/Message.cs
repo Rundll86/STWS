@@ -9,6 +9,7 @@ public partial class Message : Sprite2D
     static bool isShowing = false;
     static int lastShowingCount;
     static string lastId;
+    static int arg;
     public override void _Ready()
     {
         MsgBox = this;
@@ -34,12 +35,12 @@ public partial class Message : Sprite2D
                 )
                 {
                     HideMessage();
-                    ProcessSelectedOption(i);
+                    ProcessSelectedOption(i, arg);
                 }
             }
         }
     }
-    public static void ShowMessage(string id, string message, string[] optionsOld = null)
+    public static void ShowMessage(string id, string message, string[] optionsOld = null, int arg = 0)
     {
         string[] options = optionsOld ?? (new string[] { "确定" });
         TextRenderer.Text = message;
@@ -69,6 +70,7 @@ public partial class Message : Sprite2D
         isShowing = true;
         lastId = id;
         lastShowingCount = options?.Length ?? 0;
+        Message.arg = arg;
         GD.Print("Message:" + message);
     }
     public static void HideMessage()
@@ -86,15 +88,14 @@ public partial class Message : Sprite2D
         isShowing = false;
         lastShowingCount = 0;
     }
-    public static void ProcessSelectedOption(int selected)
+    public static void ProcessSelectedOption(int selected, int arg)
     {
         if (lastId == "order")
         {
             if (selected == 0)
             {
                 GD.Print("开始点菜");
-                Common.WorldController.GetNode<Node2D>("OrderUI").Visible = true;
-                Blocker.Block();
+                Ordering.Open(arg);
             }
             else if (selected == 1)
             {

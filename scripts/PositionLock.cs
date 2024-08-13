@@ -6,7 +6,7 @@ public partial class PositionLock : Node2D
 	[Export]
 	Node2D target;
 	[Export]
-	Vector2 offset;
+	public Vector2 offset;
 	[Export]
 	bool enabledPositionLock;
 	public override void _Process(double delta)

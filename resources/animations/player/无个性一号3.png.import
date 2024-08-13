@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dlxx3is80ew20"
-path="res://.godot/imported/step7.png-6f47bdf94459181451457c1946191867.ctex"
+uid="uid://5i2sebk0ds1g"
+path="res://.godot/imported/无个性一号3.png-135d8387ea8714c1c19ca4a5654a0697.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/animations/player/move/step7.png"
-dest_files=["res://.godot/imported/step7.png-6f47bdf94459181451457c1946191867.ctex"]
+source_file="res://resources/animations/player/无个性一号3.png"
+dest_files=["res://.godot/imported/无个性一号3.png-135d8387ea8714c1c19ca4a5654a0697.ctex"]
 
 [params]
 

@@ -9,7 +9,6 @@ public partial class OrderingExitButton : Button
 	}
 	void OnPressed()
 	{
-		GetParent<Node2D>().Visible = false;
-		Blocker.Unblock();
+		Ordering.Close();
 	}
 }

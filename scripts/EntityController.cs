@@ -5,8 +5,8 @@ public partial class EntityController : CharacterBody2D
 {
 	[Export]
 	bool PlayerControllable;
-	AnimatedSprite2D texture;
-	CollisionShape2D hitbox;
+	public AnimatedSprite2D texture;
+	public CollisionShape2D hitbox;
 	public override void _Ready()
 	{
 		texture = GetNode<AnimatedSprite2D>("Texture");
@@ -19,7 +19,7 @@ public partial class EntityController : CharacterBody2D
 			texture.Pause();
 			return;
 		}
-		if (Common.PlayerSprite.Position.Y < Position.Y)
+		if (Common.PlayerSprite != this && Common.PlayerSprite.Position.Y < texture.GlobalPosition.Y)
 		{
 			ZIndex = 1;
 		}
@@ -48,21 +48,30 @@ public partial class EntityController : CharacterBody2D
 			{
 				KinematicCollision2D result = MoveAndCollide(new Vector2(-5, 0));
 				if (result != null) { collided = result; }
+				texture.Scale = new Vector2(2, 2);
 				moved = true;
 			}
 			if (Input.IsActionPressed("move_right"))
 			{
 				KinematicCollision2D result = MoveAndCollide(new Vector2(5, 0));
 				if (result != null) { collided = result; }
+				texture.Scale = new Vector2(-2, 2);
 				moved = true;
 			}
 			if (collided != null)
 			{
 				CharacterBody2D result = collided.GetCollider() as CharacterBody2D;
-				if (result.Name == "Window1")
+				string resultName = result.Name.ToString();
+				int index = int.Parse(resultName[^1].ToString());
+				if (resultName.StartsWith("Window"))
 				{
-					Message.ShowMessage("order", "现在点菜吗？", Common.CreateArrayBy2Items("点菜", "等会再来"));
-				};
+					Message.ShowMessage(
+						"order",
+						"要在" + index + "号窗口点餐吗？",
+						new string[] { "开始点餐", "再等等" },
+						index - 1
+					);
+				}
 			}
 		}
 		if (moved)
