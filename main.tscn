@@ -1,0 +1,174 @@
+[gd_scene load_steps=23 format=3 uid="uid://2rhy8ig4wj6f"]
+
+[ext_resource type="Script" path="res://scripts/Common.cs" id="1_6yr48"]
+[ext_resource type="Texture2D" uid="uid://da4lt7k5pe1xs" path="res://resources/movable-map.png" id="2_rwety"]
+[ext_resource type="Script" path="res://scripts/UserData.cs" id="2_vxk2j"]
+[ext_resource type="Script" path="res://scripts/EntityController.cs" id="3_t6uh5"]
+[ext_resource type="Texture2D" uid="uid://un2s0rehkx6p" path="res://resources/window-1.png" id="4_2xlpx"]
+[ext_resource type="Texture2D" uid="uid://bb6ou1rjo0s40" path="res://resources/animations/player/stand.png" id="5_wcwtr"]
+[ext_resource type="Texture2D" uid="uid://brsomlrhjbkyx" path="res://resources/animations/player/move/step3.png" id="6_il1sd"]
+[ext_resource type="Texture2D" uid="uid://dlxx3is80ew20" path="res://resources/animations/player/move/step7.png" id="7_h0ibs"]
+[ext_resource type="Script" path="res://scripts/PositionLock.cs" id="8_e8cdr"]
+[ext_resource type="Texture2D" uid="uid://bcnqukw1u0kr7" path="res://resources/messagebox.png" id="9_3xloe"]
+[ext_resource type="Script" path="res://scripts/Ordering.cs" id="10_53s0k"]
+[ext_resource type="Script" path="res://scripts/Message.cs" id="10_mb301"]
+[ext_resource type="FontFile" uid="uid://c753ay5s70iwe" path="res://resources/syht.ttf" id="11_xxyss"]
+[ext_resource type="Script" path="res://scripts/OrderingExitButton.cs" id="13_l18bc"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3qps2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_2xlpx")
+}],
+"loop": true,
+"name": &"stand",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_2xlpx")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t3rj1"]
+size = Vector2(295.042, 93)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qb8lg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_wcwtr")
+}],
+"loop": true,
+"name": &"stand",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_wcwtr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_il1sd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_wcwtr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_h0ibs")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_npilh"]
+size = Vector2(45.9492, 24)
+
+[sub_resource type="InputEventKey" id="InputEventKey_wfgk0"]
+device = -1
+pressed = true
+physical_keycode = 4194305
+
+[sub_resource type="Shortcut" id="Shortcut_7tnfc"]
+events = [SubResource("InputEventKey_wfgk0")]
+
+[sub_resource type="Shortcut" id="Shortcut_jwft5"]
+events = [SubResource("InputEventKey_wfgk0")]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0b3x0"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+
+[node name="WorldController" type="Node2D"]
+script = ExtResource("1_6yr48")
+
+[node name="InitilizatorA" type="Node2D" parent="."]
+script = ExtResource("2_vxk2j")
+
+[node name="Map" type="Sprite2D" parent="."]
+texture = ExtResource("2_rwety")
+
+[node name="Window1" type="CharacterBody2D" parent="Map"]
+position = Vector2(-409.948, -329)
+script = ExtResource("3_t6uh5")
+
+[node name="Texture" type="AnimatedSprite2D" parent="Map/Window1"]
+sprite_frames = SubResource("SpriteFrames_3qps2")
+animation = &"stand"
+
+[node name="Hitbox" type="CollisionShape2D" parent="Map/Window1"]
+position = Vector2(0, 35.5)
+shape = SubResource("RectangleShape2D_t3rj1")
+
+[node name="Player" type="CharacterBody2D" parent="Map"]
+motion_mode = 1
+script = ExtResource("3_t6uh5")
+PlayerControllable = true
+
+[node name="Texture" type="AnimatedSprite2D" parent="Map/Player"]
+sprite_frames = SubResource("SpriteFrames_qb8lg")
+animation = &"stand"
+
+[node name="Hitbox" type="CollisionShape2D" parent="Map/Player"]
+position = Vector2(-1.36939e-06, 36)
+shape = SubResource("RectangleShape2D_npilh")
+
+[node name="CameraMain" type="Camera2D" parent="." node_paths=PackedStringArray("target")]
+position_smoothing_enabled = true
+script = ExtResource("8_e8cdr")
+target = NodePath("../Map/Player")
+enabledPositionLock = true
+
+[node name="OrderUI" type="Node2D" parent="." node_paths=PackedStringArray("target")]
+visible = false
+z_index = 10
+script = ExtResource("10_53s0k")
+ScrollSpeed = 30.0
+target = NodePath("../CameraMain")
+offset = Vector2(-640, -360)
+enabledPositionLock = true
+
+[node name="ExitButton" type="Button" parent="OrderUI"]
+offset_left = 3.0
+offset_top = 2.0
+offset_right = 120.0
+offset_bottom = 62.0
+theme_override_font_sizes/font_size = 20
+shortcut = SubResource("Shortcut_7tnfc")
+text = "退出菜单"
+script = ExtResource("13_l18bc")
+
+[node name="BuyButton" type="Button" parent="OrderUI"]
+offset_left = 1158.0
+offset_top = 4.0
+offset_right = 1275.0
+offset_bottom = 64.0
+theme_override_font_sizes/font_size = 20
+shortcut = SubResource("Shortcut_jwft5")
+text = "开始下单"
+
+[node name="MessageBox" type="Sprite2D" parent="."]
+visible = false
+z_index = 10
+position = Vector2(0, 230)
+scale = Vector2(1, 1)
+texture = ExtResource("9_3xloe")
+script = ExtResource("10_mb301")
+
+[node name="TextRenderer" type="RichTextLabel" parent="MessageBox"]
+offset_left = -500.0
+offset_top = -90.0
+offset_right = 500.0
+offset_bottom = 90.0
+theme_override_fonts/normal_font = ExtResource("11_xxyss")
+theme_override_font_sizes/normal_font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxEmpty_0b3x0")
+bbcode_enabled = true
+text = "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"
+scroll_active = false
