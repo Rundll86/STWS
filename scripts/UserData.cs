@@ -3,15 +3,15 @@ using System;
 
 public partial class UserData : Node
 {
-    public static Food[] Ordered;
-    public static Food[] HadFoods;
+    public static FoodObject[] Ordered;
+    public static FoodObject[] HadFoods;
     public static long Money;
     public static long TotalPrice
     {
         get
         {
             long total = 0;
-            foreach (Food f in Ordered)
+            foreach (FoodObject f in Ordered)
             {
                 if (f != null)
                     total += f.price;
@@ -24,7 +24,7 @@ public partial class UserData : Node
         get
         {
             int result = 0;
-            foreach (Food f in Ordered)
+            foreach (FoodObject f in Ordered)
             {
                 if (f != null)
                     result++;
@@ -37,7 +37,7 @@ public partial class UserData : Node
         get
         {
             int result = 0;
-            foreach (Food f in HadFoods)
+            foreach (FoodObject f in HadFoods)
             {
                 if (f != null)
                     result++;
@@ -54,7 +54,7 @@ public partial class UserData : Node
                 return "未选择任何食物";
             }
             string result = "";
-            foreach (Food f in Ordered)
+            foreach (FoodObject f in Ordered)
             {
                 if (f != null)
                     result += f.name + ",";
@@ -71,7 +71,7 @@ public partial class UserData : Node
                 return "未购买任何食物";
             }
             string result = "";
-            foreach (Food f in HadFoods)
+            foreach (FoodObject f in HadFoods)
             {
                 if (f != null)
                     result += f.name + ",";
@@ -79,10 +79,39 @@ public partial class UserData : Node
             return result[..^1];
         }
     }
+    public static void ShowEatingMessageBox()
+    {
+        if (RealHadFoodsLength == 0)
+        {
+            PauseEating();
+            return;
+        }
+        string[] options = new string[RealHadFoodsLength + 1];
+        options[0] = "暂停用餐";
+        for (int i = 0; i < options.Length - 1; i++)
+        {
+            options[i + 1] = "吃掉「" + HadFoods[i].name + "」";
+        }
+        Message.ShowMessage("eat", "享受美食！", options, 1);
+    }
+    public static void PauseEating()
+    {
+        Common.PlayerSprite.state = EntityController.State.STAND;
+        if ("ABCD".Contains(Common.LastChairType))
+        {
+            Common.PlayerSprite.texture.Position -= Common.EatingPositionOffset;
+            Common.PlayerSprite.Position -= new Vector2(0, 100);
+            Common.LastChair.GetParent<Node2D>().GetNode<AnimatedSprite2D>("Texture").ZIndex = 0;
+        }
+        else
+        {
+            Common.PlayerSprite.Position += new Vector2(0, 100);
+        }
+    }
     public override void _Ready()
     {
-        Ordered = new Food[10];
-        HadFoods = new Food[100];
+        Ordered = new FoodObject[10];
+        HadFoods = new FoodObject[0];
         Money = 30;
     }
 }

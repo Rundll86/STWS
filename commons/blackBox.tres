@@ -1,0 +1,10 @@
+[gd_resource type="StyleBoxFlat" format=3 uid="uid://boyrsgilca14v"]
+
+[resource]
+content_margin_left = 25.0
+bg_color = Color(0.270222, 0.270222, 0.270222, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)

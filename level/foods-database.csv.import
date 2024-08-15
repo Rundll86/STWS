@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://ct2j2kpxmf1et"
+
+[deps]
+
+files=["res://level/foods-database.饱食度.translation", "res://level/foods-database.蛋白质.translation", "res://level/foods-database.维生素c.translation", "res://level/foods-database.维生素B.translation", "res://level/foods-database.纤维素.translation", "res://level/foods-database.口味.translation", "res://level/foods-database.单价.translation", "res://level/foods-database.拥有图标.translation"]
+
+source_file="res://level/foods-database.csv"
+dest_files=["res://level/foods-database.饱食度.translation", "res://level/foods-database.蛋白质.translation", "res://level/foods-database.维生素c.translation", "res://level/foods-database.维生素B.translation", "res://level/foods-database.纤维素.translation", "res://level/foods-database.口味.translation", "res://level/foods-database.单价.translation", "res://level/foods-database.拥有图标.translation"]
+
+[params]
+
+compress=true
+delimiter=0

@@ -5,11 +5,11 @@ using System.Linq;
 public partial class Ordering : ScrollController
 {
 	static ScrollController OrderUI;
-	static Food[] LastOpenCards;
+	static FoodObject[] LastOpenCards;
 	public override void _Ready()
 	{
 		OrderUI = this;
-		LastOpenCards = Array.Empty<Food>();
+		LastOpenCards = Array.Empty<FoodObject>();
 	}
 	public override void _Input(InputEvent @event)
 	{
@@ -18,11 +18,12 @@ public partial class Ordering : ScrollController
 		{
 			for (int i = 0; i < LastOpenCards.Length; i++)
 			{
+				Sprite2D target = GetNode<Sprite2D>("FoodCard" + i.ToString());
 				if (
 					@event is InputEventMouseButton mouseButton &&
 					mouseButton.ButtonIndex == MouseButton.Left &&
 					mouseButton.Pressed &&
-					GetNode<ColorRect>("FoodCard" + i.ToString()).GetRect().HasPoint(GetLocalMousePosition())
+					target.GetRect().HasPoint(target.ToLocal(GetGlobalMousePosition()))
 				)
 				{
 					GD.Print("Clicked: " + LastOpenCards[i].name);
@@ -51,13 +52,12 @@ public partial class Ordering : ScrollController
 		}
 		UserData.Money -= UserData.TotalPrice;
 		UserData.HadFoods = UserData.HadFoods.Concat(UserData.Ordered).ToArray();
-		UserData.Ordered = new Food[10];
+		UserData.Ordered = new FoodObject[10];
 	}
 	public static void Close()
 	{
 		OrderUI.Visible = false;
 		Blocker.Unblock();
-		Common.MoneyLabel.Position = Common.MoneyLabelOldPosition;
 		LastOpenCards = null;
 		Godot.Collections.Array<Node> children = OrderUI.GetChildren();
 		for (int i = 0; i < 3; i++)
@@ -71,85 +71,30 @@ public partial class Ordering : ScrollController
 	}
 	public static void Open(int index)
 	{
-		Common.MoneyLabel.Position = new Vector2(-533, -300);
 		Blocker.Block();
 		OrderUI.Visible = true;
-		Food[] foods = Common.RandomFoodList[index];
+		FoodObject[] foods = Common.RandomFoodList[index];
 		OrderUI.MinOffset.Y = -360 - (foods.Length - 2) * 330;
 		LastOpenCards = foods;
 		for (int i = 0; i < foods.Length; i++)
 		{
-			ColorRect container = new()
-			{
-				Color = new Color(1, 1, 1),
-				Size = new Vector2(400, 300),
-				Position = new Vector2(440, 60 + 330 * i),
-				Name = "FoodCard" + i.ToString()
-			};
-			Node2D infos = new()
-			{
-				Position = new Vector2(200, 138),
-				Name = "FoodInfos"
-			};
-			Label nameLabel = new()
-			{
-				Text = foods[i].name,
-				Position = new Vector2(-200, -36),
-				Size = new Vector2(400, 65),
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center,
-				Name = "FoodName"
-			};
-			nameLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0));
-			nameLabel.AddThemeFontSizeOverride("font_size", 30);
-			Label subNameLabel = new()
-			{
-				Text = Food.GetFoodSubName(foods[i].name),
-				Position = new Vector2(0, 42),
-				Size = new Vector2(400, 28),
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center,
-				Name = "FoodSubName"
-			};
-			subNameLabel.AddThemeColorOverride("font_color", new Color(90 / 255, 90 / 255, 90 / 255));
-			subNameLabel.AddThemeFontSizeOverride("font_size", 15);
-			Label contentLabel = new()
-			{
-				Text = Food.GetFoodContent(foods[i].name),
-				Position = new Vector2(-200, 30),
-				Size = new Vector2(400, 72),
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center,
-				Name = "FoodContent"
-			};
-			contentLabel.AddThemeColorOverride("font_color", new Color(64 / 255, 64 / 255, 64 / 255));
-			contentLabel.AddThemeFontSizeOverride("font_size", 15);
-			Label priceLabel = new()
-			{
-				Text = foods[i].price.ToString() + "G",
-				Position = new Vector2(-200, 100),
-				Size = new Vector2(400, 42),
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center,
-				Name = "FoodPrice"
-			};
-			priceLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0));
-			priceLabel.AddThemeFontSizeOverride("font_size", 20);
-			nameLabel.AddChild(subNameLabel);
-			infos.AddChild(nameLabel);
-			infos.AddChild(contentLabel);
-			infos.AddChild(priceLabel);
-			container.AddChild(infos);
-			container.AddChild(
-				new TextureRect()
-				{
-					Size = new Vector2(100, 100),
-					ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
-					Position = new Vector2(150, 38),
-					Texture = Common.FoodIcon,
-					Name = "FoodIcon"
-				}
-			);
+			Sprite2D container = (Sprite2D)Common.ExampleFoodCard.Duplicate();
+			container.Name = "FoodCard" + i.ToString();
+			container.Position = new Vector2(640, 260 + 330 * i);
+			container.GetNode<TextureRect>("Avatar").Texture = foods[i].avatar;
+			container.GetNode<Label>("FoodName").Text = foods[i].name;
+			container.GetNode<Label>("FoodPrice").Text = foods[i].price.ToString() + "G";
+			container.GetNode<Label>("FoodValue").Text = foods[i].value.ToString();
+			container.GetNode<Label>("FoodVC").Text = foods[i].vc.ToString();
+			container.GetNode<Label>("FoodDBZ").Text = foods[i].bdz.ToString();
+			container.GetNode<Label>("FoodVB").Text = foods[i].vb.ToString();
+			container.GetNode<Label>("FoodCell").Text = foods[i].cellulose.ToString();
+			container.GetNode<Label>("Taste1").Text = foods[i].taste.甜.ToString();
+			container.GetNode<Label>("Taste2").Text = foods[i].taste.酸.ToString();
+			container.GetNode<Label>("Taste3").Text = foods[i].taste.辣.ToString();
+			container.GetNode<Label>("Taste4").Text = foods[i].taste.咸.ToString();
+			container.GetNode<Label>("Taste5").Text = foods[i].taste.清淡.ToString();
+			container.GetNode<Label>("Taste6").Text = foods[i].taste.油.ToString();
 			OrderUI.AddChild(container);
 		}
 	}

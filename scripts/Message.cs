@@ -7,7 +7,7 @@ public partial class Message : Sprite2D
     static Sprite2D MsgBox;
     static RichTextLabel TextRenderer;
     static bool isShowing = false;
-    static int lastShowingCount;
+    static ColorRect[] lastShowingOptions;
     static string lastId;
     static int arg;
     public override void _Ready()
@@ -25,13 +25,13 @@ public partial class Message : Sprite2D
     {
         if (isShowing)
         {
-            for (int i = 0; i < lastShowingCount; i++)
+            for (int i = 0; i < lastShowingOptions.Length; i++)
             {
                 if (
                     @event is InputEventMouseButton mouseButton &&
                     mouseButton.ButtonIndex == MouseButton.Left &&
                     mouseButton.Pressed &&
-                    GetNode<ColorRect>("Option" + i.ToString()).GetRect().HasPoint(GetLocalMousePosition())
+                    lastShowingOptions[i].GetRect().HasPoint(GetLocalMousePosition())
                 )
                 {
                     HideMessage();
@@ -42,17 +42,18 @@ public partial class Message : Sprite2D
     }
     public static void ShowMessage(string id, string message, string[] optionsOld = null, int arg = 0)
     {
+        Blocker.Block();
         string[] options = optionsOld ?? (new string[] { "确定" });
         TextRenderer.Text = message;
         MsgBox.Visible = true;
+        lastShowingOptions = new ColorRect[options.Length];
         for (int i = 0; i < options.Length; i++)
         {
             ColorRect currentRect = new()
             {
                 Size = new Vector2(300, 40),
                 Color = new Color(0, 0, 0),
-                Position = new Vector2(-500, -150) - new Vector2(0, 50 * i),
-                Name = "Option" + i.ToString()
+                Position = new Vector2(-500, -150) - new Vector2(0, 50 * i)
             };
             Label currentLabel = new()
             {
@@ -65,20 +66,19 @@ public partial class Message : Sprite2D
             currentLabel.AddThemeFontSizeOverride("font_size", 20);
             currentRect.AddChild(currentLabel);
             MsgBox.AddChild(currentRect);
+            lastShowingOptions[i] = currentRect;
         }
-        Blocker.PauseTime();
         isShowing = true;
         lastId = id;
-        lastShowingCount = options?.Length ?? 0;
         Message.arg = arg;
         GD.Print("Message:" + message);
     }
     public static void HideMessage()
     {
+        Blocker.Unblock();
         GD.Print("HideMessage:" + TextRenderer.Text);
         TextRenderer.Text = "";
         MsgBox.Visible = false;
-        Blocker.ResumeTime();
         Godot.Collections.Array<Node> children = MsgBox.GetChildren();
         children.RemoveAt(0);
         for (int i = 0; i < children.Count; i++)
@@ -86,44 +86,86 @@ public partial class Message : Sprite2D
             children[i].QueueFree();
         }
         isShowing = false;
-        lastShowingCount = 0;
+        lastShowingOptions = Array.Empty<ColorRect>();
     }
     public static void ProcessSelectedOption(int selected, int arg)
     {
-        if (lastId == "order")
+        GD.Print("Selected:" + selected + ",arg:" + arg);
+        switch (lastId)
         {
-            if (selected == 0)
-            {
-                GD.Print("开始点菜");
-                Ordering.Open(arg);
-            }
-            else if (selected == 1)
-            {
-                GD.Print("取消点菜");
-            }
-        }
-        else if (lastId == "eat")
-        {
-            if (arg == 1 && selected != UserData.RealHadFoodsLength)
-            {
-                UserData.HadFoods = Common.RemoveItemFromArray(UserData.HadFoods, UserData.HadFoods[selected]);
-            }
-            if (selected == 0)
-            {
-                GD.Print("开始用餐");
-                string[] options = new string[UserData.RealHadFoodsLength + 1];
-                for (int i = 0; i < options.Length - 1; i++)
+            case "order":
+                if (selected == 0)
                 {
-                    GD.Print(i + " " + options.Length + " " + UserData.HadFoods[i]);
-                    options[i] = "吃掉「" + UserData.HadFoods[i].name + "」";
+                    GD.Print("开始点菜");
+                    Ordering.Open(arg);
                 }
-                options[options.Length - 1] = "暂停用餐";
-                ShowMessage("eat", "享受美食！", options, 1);
-            }
-            else if (selected == 1)
-            {
-                GD.Print("取消用餐");
-            }
+                else if (selected == 1)
+                {
+                    GD.Print("取消点菜");
+                }
+                break;
+            case "eat":
+                if (arg == 1)
+                {
+                    if (selected == 0)
+                    {
+                        GD.Print("暂停用餐");
+                        UserData.PauseEating();
+                        return;
+                    }
+                    FoodObject lastAte = UserData.HadFoods[selected - 1];
+                    Common.FoodEatingAnimation.Texture = lastAte.avatar;
+                    if ("ABCD".Contains(Common.LastChairType))
+                    {
+                        Common.FoodEatingAnimationPlayer.Play("down-to-up");
+                    }
+                    else
+                    {
+                        Common.FoodEatingAnimationPlayer.Play("up-to-down");
+                    }
+                    // Common.FoodEatingAnimationPlayer.Play("eat5-fly");
+                    Common.PlayerSprite.eating = true;
+                    TimeCalc.StepMultipiler = 6;
+                    ThreadSleep.SleepAsync(5000).Then((_) =>
+                    {
+                        TimeCalc.StepMultipiler = 1;
+                        Common.PlayerSprite.eating = false;
+                        UserData.HadFoods = Common.RemoveItemFromArray(UserData.HadFoods, lastAte);
+                        GD.Print("吃掉「" + lastAte.name + "」");
+                        UserData.ShowEatingMessageBox();
+                        return null;
+                    });
+                }
+                else
+                {
+                    if (selected == 0)
+                    {
+                        if (UserData.RealHadFoodsLength == 0)
+                        {
+                            ShowMessage("warning", "你还没有购买任何食物！");
+                            return;
+                        }
+                        GD.Print("开始用餐");
+                        UserData.ShowEatingMessageBox();
+                        Common.PlayerSprite.Position = Common.LastChair.GlobalPosition;
+                        Common.PlayerSprite.state = EntityController.State.SIT_ON_DOWN;
+                        if ("ABCD".Contains(Common.LastChairType))
+                        {
+                            Common.PlayerSprite.Position = new Vector2(
+                                Common.PlayerSprite.Position.X,
+                                Common.LastChair.GetParent().GetParent<Node2D>().Position.Y + 10
+                            );
+                            Common.PlayerSprite.texture.Position += Common.EatingPositionOffset;
+                            Common.PlayerSprite.state = EntityController.State.SIT_ON_UP;
+                            Common.LastChair.GetParent<Node2D>().GetNode<AnimatedSprite2D>("Texture").ZIndex = 1;
+                        }
+                    }
+                    else if (selected == 1)
+                    {
+                        GD.Print("取消用餐");
+                    }
+                }
+                break;
         }
     }
 }
