@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project", "Project.csproj", "{586D9170-44F7-40C6-92B8-2D51131B5AEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STWS", "STWS.csproj", "{586D9170-44F7-40C6-92B8-2D51131B5AEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

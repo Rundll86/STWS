@@ -25,7 +25,7 @@ window/size/resizable=false
 
 [dotnet]
 
-project/assembly_name="Project"
+project/assembly_name="STWS"
 
 [editor]
 
