@@ -125,7 +125,7 @@ public partial class Message : Sprite2D
                     }
                     // Common.FoodEatingAnimationPlayer.Play("eat5-fly");
                     Common.PlayerSprite.eating = true;
-                    TimeCalc.StepMultipiler = 6;
+                    TimeCalc.StepMultipiler = 12;
                     ThreadSleep.SleepAsync(5000).Then((_) =>
                     {
                         TimeCalc.StepMultipiler = 1;

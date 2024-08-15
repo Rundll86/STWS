@@ -10,10 +10,10 @@ public partial class TimeCalc : Node2D
 	{
 		return DateTime.Now.Ticks / 10000000;
 	}
-	public static Promise<int> StepSeconds()
+	public static void StepSeconds()
 	{
 		RunningTime += StepMultipiler;
-		return ThreadSleep.SleepAsync(1000).Then(e => StepSeconds());
+		ThreadSleep.SleepAsync(1000).Then(e => { StepSeconds(); return null; });
 	}
 	public override void _Ready()
 	{
