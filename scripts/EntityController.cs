@@ -46,7 +46,7 @@ public partial class EntityController : CharacterBody2D
 		}
 		if (PlayerControllable)
 		{
-			Blocker.CheckBlockedAndThrow();
+			if (Blocker.IsBlocked()) { return; };
 			KinematicCollision2D collided = null;
 			if (Input.IsActionPressed("move_up"))
 			{
@@ -81,12 +81,23 @@ public partial class EntityController : CharacterBody2D
 				if (resultName.StartsWith("Window"))
 				{
 					int index = int.Parse(resultName[^1].ToString());
-					Message.ShowMessage(
-						"order",
-						"要在" + index + "号窗口点餐吗？",
-						new string[] { "开始点餐", "再等等" },
-						index - 1
-					);
+					Mamba.WhatCanISayAsync(
+						"",
+						"要在" + index + "号窗口（" + Common.ShopTypes[index - 1] + "类）点餐吗？",
+						new string[] { "开始点餐", "再等等" }
+					).Then(selected =>
+					{
+						if (selected == 0)
+						{
+							GD.Print("开始点菜");
+							Ordering.Open(index - 1);
+						}
+						else if (selected == 1)
+						{
+							GD.Print("取消点菜");
+						}
+						return null;
+					});
 				}
 				else if (resultName.StartsWith("Chair"))
 				{
@@ -97,49 +108,95 @@ public partial class EntityController : CharacterBody2D
 					string numberA = resultParentName[^3..].TrimStart('0');
 					string numberB = resultName[^1].ToString();
 					Common.LastChairType = numberB;
-					Message.ShowMessage(
-						"eat",
+					Mamba.WhatCanISayAsync(
+						"",
 						"要在" + numberA + "号餐桌的座位" + numberB + "用餐吗？",
 						new string[] { "开始用餐", "换一个座位" }
-					);
+					).Then(selected =>
+					{
+						if (selected == 0)
+						{
+							if (UserData.RealHadFoodsLength == 0)
+							{
+								Mamba.WhatCanISayAsync("", "你还没买饭呢，打算吃别人的？");
+								return null;
+							}
+							GD.Print("开始用餐");
+							ThreadSleep.SleepAsync(100).Then((e) => { UserData.ShowEatingMessageBox(); return null; });
+							Common.PlayerSprite.Position = Common.LastChair.GlobalPosition;
+							Common.PlayerSprite.state = State.SIT_ON_DOWN;
+							if ("ABCD".Contains(Common.LastChairType))
+							{
+								Common.PlayerSprite.Position = new Vector2(
+									Common.PlayerSprite.Position.X,
+									Common.LastChair.GetParent().GetParent<Node2D>().Position.Y + 10
+								);
+								Common.PlayerSprite.texture.Position += Common.EatingPositionOffset;
+								Common.PlayerSprite.state = State.SIT_ON_UP;
+								Common.LastChair.GetParent<Node2D>().GetNode<AnimatedSprite2D>("Texture").ZIndex = 1;
+							}
+						}
+						else if (selected == 1)
+						{
+							GD.Print("取消用餐");
+						}
+						return null;
+					});
 				}
 				else if (resultName == "Tester")
 				{
-					Mamba.WhatCanISay("", "测试对话框（同步函数）", null, (_, _) =>
+					Mamba.WhatCanISayAsync("一个角色", "测试角色说话对话框").Then(e =>
 					{
-						Mamba.WhatCanISay("", "测试可选回答的对话框", new string[] { "选项一", "オプション II", "Option3" }, (_, name) =>
+						return Mamba.WhatCanISayAsync("一个角色", "你吃饭了吗？", new string[] { "吃过了", "还没吃" });
+					}).Then(selected =>
+					{
+						if (selected == 0)
 						{
-							Mamba.WhatCanISay("", "你刚才选择了选项[" + name + "]！", null, (_, _) =>
-							{
-								Mamba.WhatCanISay("", "你吃饭了吗？", new string[] { "吃了", "没吃" }, (selected, _) =>
-								{
-									Mamba.WhatCanISay("", "你" + (selected == 0 ? "吃饭了" : "没吃饭") + "");
-								});
-							});
-						});
+							return Mamba.WhatCanISayAsync("一个角色", "那没事了。");
+						}
+						else if (selected == 1)
+						{
+							return Mamba.WhatCanISayAsync("一个角色", "那还等什么，赶紧去吃啊！");
+						}
+						return null;
 					});
 				}
 				else if (resultName == "Tester2")
 				{
-					Mamba.WhatCanISayAsync("", "测试对话框（异步函数-原生async）").Then((e) =>
+					Mamba.WhatCanISayAsync("", "测试系统说话对话框").Then(() =>
 					{
-						return Mamba.WhatCanISayAsync("", "Man!What can i say???");
-					}).Then((e) =>
+						Mamba.WhatCanISayAsync("", "Man!What can I say???");
+					}).Then(() =>
 					{
 						return Mamba.WhatCanISayAsync("", "Where's my HELICOPTER???", new string[] { "In the sky.", "In the ground." });
 					}).Then((e) =>
 					{
 						GD.Print(e);
-						return Mamba.WhatCanISayAsync("", "No!Your mother is dead!!!");
-					}).Then((e) =>
+						Mamba.WhatCanISayAsync("", "No!Your mother is dead!!!");
+					}).Then(() =>
 					{
-						return Mamba.WhatCanISayAsync("", "测试对话框（异步函数-Promise）");
-					}).Then((e) =>
+						Mamba.WhatCanISayAsync("", "测试对话框（Promise）");
+					}).Then(() =>
 					{
 						return Mamba.WhatCanISayAsync("", "选择一个选项", new string[] { "选项一", "选项二", "选项三" });
 					}).Then((e) =>
 					{
-						return Mamba.WhatCanISayAsync("", "你刚才选择了选项[" + (e + 1).ToString() + "]");
+						Mamba.WhatCanISayAsync("", "你刚才选择了选项[" + (e + 1).ToString() + "]");
+					});
+				}
+				else if (resultName == "QueueDetector")
+				{
+					CharacterBody2D npc000 = result.GetParent<CharacterBody2D>();
+					Mamba.WhatCanISayAsync(npc000.Name.ToString(), "喂，你想干嘛？", new string[] { "插队", "借过一下" }).Then(selected =>
+					{
+							if (selected == 0)
+							{
+								Mamba.WhatCanISayAsync("FallingShrimp", "测试角色对话框头像显示");
+							}
+							else
+							{
+								Mamba.WhatCanISayAsync("Kobe Bryant", "What can I say?Mamba out!");
+							}
 					});
 				}
 			}

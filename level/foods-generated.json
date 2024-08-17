@@ -18,7 +18,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 6
     },
     {
         "name": "什锦炸货盖饭",
@@ -39,7 +40,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 6
     },
     {
         "name": "红烧鸡块盖饭",
@@ -60,7 +62,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 6
     },
     {
         "name": "红烧排骨盖饭",
@@ -81,7 +84,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 6
     },
     {
         "name": "麻辣豆芽鸭血盖饭",
@@ -102,7 +106,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 6
     },
     {
         "name": "光面",
@@ -123,7 +128,8 @@
             "油": 0,
             "清淡": 1
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 5
     },
     {
         "name": "青菜面",
@@ -144,7 +150,8 @@
             "油": 0,
             "清淡": 1
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 5
     },
     {
         "name": "鸡腿面",
@@ -165,7 +172,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 5
     },
     {
         "name": "牛肉面",
@@ -186,7 +194,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 5
     },
     {
         "name": "雪菜肉丝面",
@@ -207,7 +216,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 5
     },
     {
         "name": "牛肉粉丝面",
@@ -228,7 +238,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 5
     },
     {
         "name": "手抓饼",
@@ -249,7 +260,8 @@
             "油": 3,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 5
     },
     {
         "name": "汉堡",
@@ -270,7 +282,8 @@
             "油": 1,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "鸡肉卷",
@@ -291,7 +304,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "鸡翅饭",
@@ -312,7 +326,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 6
     },
     {
         "name": "肉松卷",
@@ -333,7 +348,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 1
     },
     {
         "name": "豆沙面包",
@@ -354,7 +370,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 1
     },
     {
         "name": "巧克力卷",
@@ -375,7 +392,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 1
     },
     {
         "name": "肉松塔克",
@@ -396,7 +414,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "蟹味饭团",
@@ -417,7 +436,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 6
     },
     {
         "name": "三明治",
@@ -438,7 +458,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "蓝莓果酱面包",
@@ -459,7 +480,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 1
     },
     {
         "name": "年糕",
@@ -480,7 +502,8 @@
             "油": 2,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 1
     },
     {
         "name": "烤冷面",
@@ -501,7 +524,8 @@
             "油": 3,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 5
     },
     {
         "name": "炸土豆串",
@@ -522,7 +546,8 @@
             "油": 3,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "臭豆腐",
@@ -543,7 +568,8 @@
             "油": 2,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "炸鸡腿",
@@ -564,7 +590,8 @@
             "油": 2,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "蛋挞",
@@ -585,7 +612,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 1
     },
     {
         "name": "鸡块",
@@ -606,7 +634,8 @@
             "油": 1,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "油爆茄子",
@@ -627,7 +656,8 @@
             "油": 1,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "土豆牛肉",
@@ -648,7 +678,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "炒油花菜",
@@ -669,7 +700,8 @@
             "油": 1,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "红烧鸡块",
@@ -690,7 +722,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false
+        "haveAvatar": false,
+        "classify": 7
     },
     {
         "name": "油面筋塞肉",
@@ -711,7 +744,8 @@
             "油": 2,
             "清淡": 0
         },
-        "haveAvatar": true
+        "haveAvatar": true,
+        "classify": 5
     },
     {
         "name": "浇油辣鱼",
@@ -732,7 +766,8 @@
             "油": 1,
             "清淡": 0
         },
-        "haveAvatar": true
+        "haveAvatar": true,
+        "classify": 6
     },
     {
         "name": "清炒海带",
@@ -753,7 +788,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": true
+        "haveAvatar": true,
+        "classify": 7
     },
     {
         "name": "胡萝卜炒木耳",
@@ -774,7 +810,8 @@
             "油": 0,
             "清淡": 1
         },
-        "haveAvatar": true
+        "haveAvatar": true,
+        "classify": 7
     },
     {
         "name": "白菜卷肉团",
@@ -795,7 +832,8 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": true
+        "haveAvatar": true,
+        "classify": 7
     },
     {
         "name": "时令小炒",
@@ -816,7 +854,8 @@
             "油": 0,
             "清淡": 1
         },
-        "haveAvatar": true
+        "haveAvatar": true,
+        "classify": 7
     },
     {
         "name": "米饭",
@@ -837,6 +876,73 @@
             "油": 0,
             "清淡": 1
         },
-        "haveAvatar": true
+        "haveAvatar": true,
+        "classify": 6
+    },
+    {
+        "name": "PlaceHolderA",
+        "value": 0,
+        "bdz": 0,
+        "vc": 0,
+        "vb": 0,
+        "cellulose": 0,
+        "price": 1,
+        "count": 1,
+        "taste": {
+            "酸": 0,
+            "甜": 0,
+            "苦": 0,
+            "辣": 0,
+            "咸": 0,
+            "麻": 0,
+            "油": 0,
+            "清淡": 1
+        },
+        "haveAvatar": false,
+        "classify": 2
+    },
+    {
+        "name": "PlaceHolderB",
+        "value": 0,
+        "bdz": 0,
+        "vc": 0,
+        "vb": 0,
+        "cellulose": 0,
+        "price": 1,
+        "count": 1,
+        "taste": {
+            "酸": 0,
+            "甜": 0,
+            "苦": 0,
+            "辣": 0,
+            "咸": 0,
+            "麻": 0,
+            "油": 0,
+            "清淡": 1
+        },
+        "haveAvatar": false,
+        "classify": 3
+    },
+    {
+        "name": "PlaceHolderC",
+        "value": 0,
+        "bdz": 0,
+        "vc": 0,
+        "vb": 0,
+        "cellulose": 0,
+        "price": 1,
+        "count": 1,
+        "taste": {
+            "酸": 0,
+            "甜": 0,
+            "苦": 0,
+            "辣": 0,
+            "咸": 0,
+            "麻": 0,
+            "油": 0,
+            "清淡": 1
+        },
+        "haveAvatar": false,
+        "classify": 4
     }
 ]

@@ -29,12 +29,12 @@ public partial class Ordering : ScrollController
 					GD.Print("Clicked: " + LastOpenCards[i].name);
 					if (UserData.TotalPrice + LastOpenCards[i].price > UserData.Money)
 					{
-						Message.ShowMessage("notEnoughMoney", "你可没有那么多钱！");
+						Mamba.WhatCanISayAsync("", "电话亭出门直走然后右转！");
 						return;
 					}
 					if (UserData.RealOrderedLength == 10)
 					{
-						Message.ShowMessage("tooMuchItems", "你选择的食物太多了！");
+						Mamba.WhatCanISayAsync("", "买这么多吃的完么？");
 						return;
 					}
 					UserData.Ordered[UserData.RealOrderedLength] = LastOpenCards[i];
@@ -47,7 +47,7 @@ public partial class Ordering : ScrollController
 	{
 		if (UserData.RealOrderedLength == 0)
 		{
-			Message.ShowMessage("noFood", "你还没有选择任何食物！");
+			Mamba.WhatCanISayAsync("", "你也没想好吃啥啊，再想想呢？");
 			return;
 		}
 		UserData.Money -= UserData.TotalPrice;

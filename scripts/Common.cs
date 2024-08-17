@@ -20,6 +20,8 @@ public partial class Common : Node2D
     static public AnimationPlayer TimerAnimator;
     static public Node2D ExampleTableGroup;
     static public Sprite2D ExampleFoodCard;
+    static public TextureRect ExampleFoodCardShow;
+    static public Sprite2D ExampleProgressBlock;
     static public Node2D TableController;
     static public Vector2 TablePositionOffset;
     static public Vector2 TableArrangement;
@@ -29,6 +31,7 @@ public partial class Common : Node2D
     static public Vector2 EatingPositionOffset;
     static public Sprite2D FoodEatingAnimation;
     static public AnimationPlayer FoodEatingAnimationPlayer;
+    static public string[] ShopTypes;
     static public T[] CreateArrayBy3Items<T>(T v1, T v2, T v3)
     {
         return new T[] { v1, v2, v3 };
@@ -43,8 +46,7 @@ public partial class Common : Node2D
     }
     static public T[] PickRandomElements<T>(T[] array, int count)
     {
-        Random random = new Random();
-        return array.OrderBy(x => random.Next()).Take(count).ToArray();
+        return array.OrderBy(x => Guid.NewGuid()).Take(count).ToArray();
     }
     static public void PrintJson(object obj)
     {
@@ -54,10 +56,14 @@ public partial class Common : Node2D
     {
         return (float)d;
     }
-    static public T[] RemoveItemFromArray<T>(T[] arr, T itemToRemove)
+    static public T[] RemoveItemFromArray<T>(T[] arr, T itemToRemove, bool all = true)
     {
         List<T> list = new(arr);
-        list.Remove(itemToRemove);
+        do
+        {
+            list.Remove(itemToRemove);
+        }
+        while (all && list.Contains(itemToRemove));
         return list.ToArray();
     }
     static public T[] RemoveItemFromArray<T>(T[] arr, int index)
@@ -83,7 +89,14 @@ public partial class Common : Node2D
     public override void _Ready()
     {
         Food.Init();
-        GD.Print(Food.FoodList);
+        ShopTypes = new string[] { "糕点", "自选", "自选", "自选", "面食", "饭食" };
+        ExampleTableGroup = GetNode<Node2D>("/root/WorldController/InitilizatorC/ExampleTableGroup");
+        ExampleFoodCard = GetNode<Sprite2D>("/root/WorldController/InitilizatorC/ExampleFoodCard");
+        ExampleFoodCard.GetParent().RemoveChild(ExampleFoodCard);
+        ExampleFoodCardShow = GetNode<TextureRect>("/root/WorldController/InitilizatorC/ExampleFoodCardShow");
+        ExampleFoodCardShow.GetParent().RemoveChild(ExampleFoodCardShow);
+        ExampleProgressBlock = GetNode<Sprite2D>("/root/WorldController/InitilizatorC/ExampleProgressBlock");
+        ExampleProgressBlock.GetParent().RemoveChild(ExampleProgressBlock);
         PlayerSprite = GetNode<EntityController>("Map/Player");
         SYHT = GD.Load<Font>("res://resources/syht.ttf");
         Unifont = GD.Load<Font>("res://resources/unifont.ttf");
@@ -93,21 +106,38 @@ public partial class Common : Node2D
         MoneyLabel = GetNode<Label>("CameraMain/MoneyLabel");
         BoughtFoodLabel = MoneyLabel.GetNode<Label>("BoughtFoodList");
         RandomFoodLengthList = new int[] { 8, 6, 6, 6, 4, 4 };
-        RandomFoodList = new FoodObject[RandomFoodLengthList.Length][];
+        RandomFoodList = new FoodObject[0][];
         for (int i = 0; i < RandomFoodLengthList.Length; i++)
         {
-            RandomFoodList[i] = PickRandomElements(Food.FoodList, RandomFoodLengthList[i]);
+            GD.Print("LoadedWindow:" + i.ToString());
+            RandomFoodList = AppendItemToArray(
+                RandomFoodList,
+                PickRandomElements(
+                    Food.FoodListByClassify[(new int[] { 1, 2, 3 }).Contains(i) ? 6 : i],
+                    RandomFoodLengthList[i]
+                )
+            );
+            StaticBody2D currentWindow = GetNode<StaticBody2D>("Map/Window" + (i + 1).ToString());
+            int currentLength = RandomFoodList[i].Length;
+            for (int j = 0; j < currentLength; j++)
+            {
+                TextureRect currentFoodCardShow = (TextureRect)ExampleFoodCardShow.Duplicate();
+                currentFoodCardShow.Name = "FoodCardShow" + j;
+                currentFoodCardShow.Texture = RandomFoodList[i][j].avatar;
+                currentFoodCardShow.Position = new Vector2(
+                    j < currentLength / 2 ? -102 - 39 * j : 67 + 39 * (j - currentLength / 2),
+                    -200
+                );
+                currentWindow.AddChild(currentFoodCardShow);
+            }
         }
         Timer = GetNode<ProgressBar>("CameraMain/Timer");
-        TimerAnimator = Timer.GetNode<AnimationPlayer>("AnimationPlayer");
+        TimerAnimator = Timer.GetNode<AnimationPlayer>("Animator");
         TableController = GetNode<Node2D>("Map/TableController");
         Map = GetNode<TileMap>("Map");
         TablePositionOffset = new Vector2(700, 400);
         EatingPositionOffset = new Vector2(0, -50);
         TableArrangement = new Vector2(6, 14);
-        ExampleTableGroup = GetNode<Node2D>("/root/WorldController/InitilizatorC/ExampleTableGroup");
-        ExampleFoodCard = GetNode<Sprite2D>("/root/WorldController/InitilizatorC/ExampleFoodCard");
-        ExampleFoodCard.GetParent().RemoveChild(ExampleFoodCard);
         int clonedCount = 0;
         Node2D cloned;
         for (int i = 0; i < TableArrangement.X; i++)

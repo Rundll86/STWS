@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 
 public partial class UserData : Node
 {
@@ -87,12 +88,78 @@ public partial class UserData : Node
             return;
         }
         string[] options = new string[RealHadFoodsLength + 1];
-        options[0] = "暂停用餐";
         for (int i = 0; i < options.Length - 1; i++)
         {
-            options[i + 1] = "吃掉「" + HadFoods[i].name + "」";
+            options[i + 1] = "整「" + HadFoods[i].name + "」";
         }
-        Message.ShowMessage("eat", "享受美食！", options, 1);
+        options = options.Distinct().ToArray();
+        options[0] = "有点噎着了...稍微缓一缓...";
+        Mamba.WhatCanISayAsync("", "不错，味儿正", options).Then(selected =>
+        {
+            if (selected == 0)
+            {
+                GD.Print("暂停用餐");
+                PauseEating();
+                return null;
+            }
+            FoodObject lastAte = HadFoods[selected - 1];
+            GD.Print("lastAte:" + lastAte.name);
+            Common.FoodEatingAnimation.Texture = lastAte.avatar;
+            if ("ABCD".Contains(Common.LastChairType))
+            {
+                Common.FoodEatingAnimationPlayer.Play("show-up");
+            }
+            else
+            {
+                Common.FoodEatingAnimationPlayer.Play("show-down");
+            }
+            Sprite2D progressBlockBack = (Sprite2D)Common.ExampleProgressBlock.Duplicate();
+            progressBlockBack.Texture = lastAte.avatar;
+            GD.Print("cloned progress block");
+            int i;
+            for (i = 0; i < GetFoodCount(lastAte) - 1; i++)
+            {
+                Sprite2D currentProgressBlock = (Sprite2D)progressBlockBack.Duplicate();
+                currentProgressBlock.Position += new Vector2(40 * i, 0);
+                currentProgressBlock.Name = "ProgressBlock" + i;
+                Common.FoodEatingAnimation.AddChild(currentProgressBlock);
+                GD.Print("Added:" + currentProgressBlock.Name);
+            }
+            i--;
+            Common.PlayerSprite.eating = true;
+            TimeCalc.TimeAccelerates(4, 5000 * GetFoodCount(lastAte));
+            TimeCalc.MethodCirculator(() =>
+            {
+                HadFoods = Common.RemoveItemFromArray(HadFoods, lastAte, false);
+                if (i >= 0)
+                {
+                    Sprite2D currentProgressBlock = Common.FoodEatingAnimation.GetNode<Sprite2D>("ProgressBlock" + i);
+                    currentProgressBlock.GetNode<AnimationPlayer>("Animator").Play("ate");
+                    ThreadSleep.SleepAsync(500).Then(e =>
+                    {
+                        currentProgressBlock.QueueFree();
+                        return null;
+                    });
+                    i--;
+                }
+                GD.Print("Ate:" + lastAte.name);
+            }, 5000, GetFoodCount(lastAte), true);
+            ThreadSleep.SleepAsync(5000 * GetFoodCount(lastAte) + 100).Then((_) =>
+            {
+                if ("ABCD".Contains(Common.LastChairType))
+                {
+                    Common.FoodEatingAnimationPlayer.Play("flyout-up");
+                }
+                else
+                {
+                    Common.FoodEatingAnimationPlayer.Play("flyout-down");
+                }
+                Common.PlayerSprite.eating = false;
+                ShowEatingMessageBox();
+                return null;
+            });
+            return null;
+        });
     }
     public static void PauseEating()
     {
@@ -107,6 +174,16 @@ public partial class UserData : Node
         {
             Common.PlayerSprite.Position += new Vector2(0, 100);
         }
+    }
+    public static int GetFoodCount(FoodObject food)
+    {
+        int result = 0;
+        foreach (FoodObject f in HadFoods)
+        {
+            if (f == food)
+                result++;
+        }
+        return result;
     }
     public override void _Ready()
     {

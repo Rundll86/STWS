@@ -1,113 +1,102 @@
 using Godot;
 using System;
 
-public partial class Mamba : Button
+public partial class Mamba : TextureRect
 {
 	private static Action _savedCallback;
-	public static Button MambaBox;
+	public static TextureRect MambaBox;
 	public static RichTextLabel MambaText;
-	public static Button MambaButton;
+	public static AnimationPlayer MambaTextAnimator;
+	public static TextureRect MambaTexture;
+	public static Button MambaButtonSubstance;
 	public static Button MambaButtonDuplicated;
-	public static Button ExampleOption;
+	public static TextureButton ExampleOption;
+	public static AnimationPlayer Animator;
+	public static Label MambaCharacter;
 	public override void _Ready()
 	{
 		MambaBox = this;
+		Animator = GetNode<AnimationPlayer>("Animator");
 		MambaText = GetNode<RichTextLabel>("MambaText");
-		MambaButton = GetNode<Button>("Button");
-		MambaButtonDuplicated = (Button)MambaButton.Duplicate();
-		MambaButton.QueueFree();
-		ExampleOption = GetNode<Button>("/root/WorldController/InitilizatorC/ExampleOption");
+		MambaTextAnimator = MambaText.GetNode<AnimationPlayer>("Animator");
+		MambaTexture = GetNode<TextureRect>("MambaTexture");
+		MambaButtonSubstance = GetNode<Button>("Button");
+		MambaButtonSubstance.Visible = true;
+		MambaButtonDuplicated = (Button)MambaButtonSubstance.Duplicate();
+		MambaButtonSubstance.QueueFree();
+		ExampleOption = GetNode<TextureButton>("/root/WorldController/InitilizatorC/ExampleOption");
 		ExampleOption.GetParent().RemoveChild(ExampleOption);
-		Visible = false;
-	}
-	public delegate void SayingCallback(int selected, string selectedName);
-	public static void WhatCanISay(string CharacterName, string Message, string[] options = null, SayingCallback callback = null)
-	{
-		Blocker.PauseTime();
-		MambaText.Text = Message;
-		if (options == null)
-		{
-			MambaButton = (Button)MambaButtonDuplicated.Duplicate();
-			_savedCallback = () =>
-			{
-				Blocker.ResumeTime();
-				MambaButton.QueueFree();
-				MambaBox.Visible = false;
-				callback?.Invoke(-1, "");
-			};
-			MambaButton.Pressed += _savedCallback;
-			MambaBox.AddChild(MambaButton);
-		}
-		else
-		{
-			for (int i = 0; i < options.Length; i++)
-			{
-				int savedI = i;
-				Button currentOption = (Button)ExampleOption.Duplicate();
-				currentOption.Text = options[i];
-				currentOption.Name = "Option" + savedI.ToString();
-				currentOption.Position += new Vector2(0, 69 * i);
-				_savedCallback = () =>
-				{
-					Blocker.ResumeTime();
-					MambaBox.Visible = false;
-					for (int j = 0; j < i; j++)
-					{
-						MambaBox.RemoveChild(MambaBox.GetNode("Option" + j.ToString()));
-						GD.Print("removed option " + j.ToString());
-					}
-					callback?.Invoke(savedI, options[savedI]);
-				};
-				currentOption.Pressed += _savedCallback;
-				MambaBox.AddChild(currentOption);
-			}
-		}
-		MambaBox.Visible = true;
+		MambaCharacter = GetNode<Label>("MambaCharacter");
 	}
 	public static Promise<int> WhatCanISayAsync(string CharacterName, string Message, string[] options = null)
 	{
 		return new Promise<int>((resolve, reject) =>
 		{
+			int leaveTime = 350;
+			Animator.Play("join");
 			Blocker.PauseTime();
+			if (CharacterName == "")
+			{
+				MambaBox.Texture = GD.Load<Texture2D>("res://resources/talkingbox/system.png");
+				MambaTextAnimator.Play("big");
+				MambaCharacter.Visible = false;
+				MambaTexture.Visible = false;
+			}
+			else
+			{
+				MambaBox.Texture = GD.Load<Texture2D>("res://resources/talkingbox/character.png");
+				MambaTextAnimator.Play("small");
+				MambaCharacter.Visible = true;
+				MambaCharacter.Text = CharacterName;
+				MambaTexture.Visible = true;
+				MambaTexture.Texture = GD.Load<Texture2D>("res://resources/characters/" + CharacterName + ".png");
+			};
 			MambaText.Text = Message;
 			if (options == null)
 			{
-				MambaButton = (Button)MambaButtonDuplicated.Duplicate();
+				Button Helicopter = (Button)MambaButtonDuplicated.Duplicate();
 				_savedCallback = () =>
 				{
-					Blocker.ResumeTime();
-					MambaButton.QueueFree();
-					MambaBox.Visible = false;
-					resolve(-1);
+					Animator.Play("leave");
+					ThreadSleep.SleepAsync(leaveTime).Then(e =>
+					{
+						Blocker.ResumeTime();
+						resolve(-1);
+						return null;
+					});
+					Helicopter.QueueFree();
 				};
-				MambaButton.Pressed += _savedCallback;
-				MambaBox.AddChild(MambaButton);
+				Helicopter.Pressed += _savedCallback;
+				MambaBox.AddChild(Helicopter);
 			}
 			else
 			{
 				for (int i = 0; i < options.Length; i++)
 				{
 					int savedI = i;
-					Button currentOption = (Button)ExampleOption.Duplicate();
-					currentOption.Text = options[i];
+					TextureButton currentOption = (TextureButton)ExampleOption.Duplicate();
+					currentOption.GetNode<Label>("Text").Text = options[i];
 					currentOption.Name = "Option" + savedI.ToString();
-					currentOption.Position += new Vector2(0, 69 * i);
+					currentOption.Position -= new Vector2(0, 69 * i);
 					_savedCallback = () =>
 					{
-						Blocker.ResumeTime();
-						MambaBox.Visible = false;
+						Animator.Play("leave");
+						ThreadSleep.SleepAsync(leaveTime).Then(e =>
+						{
+							Blocker.ResumeTime();
+							resolve(savedI);
+							return null;
+						});
 						for (int j = 0; j < i; j++)
 						{
 							MambaBox.RemoveChild(MambaBox.GetNode("Option" + j.ToString()));
 							GD.Print("removed option " + j.ToString());
 						}
-						resolve(savedI);
 					};
 					currentOption.Pressed += _savedCallback;
 					MambaBox.AddChild(currentOption);
 				}
 			}
-			MambaBox.Visible = true;
 		});
 	}
 }

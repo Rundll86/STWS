@@ -28,13 +28,14 @@ def csv_to_json(csv_file, json_file):
             "name": row["名称"],
             "value": row["饱食度"],
             "bdz": row["蛋白质"],
-            "vc": row["维生素c"],
+            "vc": row["维生素C"],
             "vb": row["维生素B"],
             "cellulose": row["纤维素"],
             "price": row["单价"],
             "count": row.get("count", 1),
             "taste": parse_taste(row.get("口味", "")),
             "haveAvatar": bool(row["拥有图标"]),
+            "classify": row["分类"],
         }
         json_list.append(item)
     with open(json_file, "w", encoding="utf-8") as f:

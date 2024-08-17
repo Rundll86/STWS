@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using Newtonsoft.Json;
+using System.Linq;
 public class FoodObject
 {
     public string name { get; set; }
@@ -12,7 +13,8 @@ public class FoodObject
     public int price { get; set; }
     public int count { get; set; }
     public Taste taste { get; set; }
-    public bool haveAvatar = false;
+    public bool haveAvatar { get; set; }
+    public int classify { get; set; }
     Texture2D _avatarTemp;
     public Texture2D avatar
     {
@@ -32,13 +34,6 @@ public class FoodObject
             return _avatarTemp;
         }
     }
-    public string tasteContent
-    {
-        get
-        {
-            return "酸：" + taste.酸 + " 甜：" + taste.甜 + " 苦：" + taste.苦 + " 辣：" + taste.辣 + " 咸：" + taste.咸 + " 麻：" + taste.麻 + " 油：" + taste.油 + " 清淡：" + taste.清淡;
-        }
-    }
 }
 public class Taste
 {
@@ -54,9 +49,35 @@ public class Taste
 public class Food
 {
     public static FoodObject[] FoodList;
+    public static FoodObject[][] FoodListByClassify;
     public static void Init()
     {
         FoodList = JsonConvert.DeserializeObject<FoodObject[]>(Json.Stringify(GD.Load<Json>("res://level/foods-generated.json").Data));
+        int maxClassify = 0;
+        for (int i = 0; i < FoodList.Length; i++)
+        {
+            int classify = FoodList[i].classify;
+            if (classify > maxClassify)
+            {
+                maxClassify = classify;
+            }
+        }
+        FoodListByClassify = new FoodObject[maxClassify + 1][];
+        for (int i = 0; i < FoodList.Length; i++)
+        {
+            int classify = FoodList[i].classify;
+            if (FoodListByClassify[classify] == null)
+            {
+                FoodListByClassify[classify] = new FoodObject[] { FoodList[i] };
+            }
+            else
+            {
+                Array.Resize(ref FoodListByClassify[classify], FoodListByClassify[classify].Length + 1);
+                FoodListByClassify[classify][FoodListByClassify[classify].Length - 1] = FoodList[i];
+            }
+        }
+        FoodListByClassify = Common.RemoveItemFromArray(FoodListByClassify, null);
+        Common.PrintJson(FoodListByClassify.Length);
     }
     public static FoodObject FindFoodByName(string name)
     {

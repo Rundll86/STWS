@@ -35,18 +35,4 @@ public partial class Blocker
     {
         return blocked;
     }
-    public static void CheckBlockedAndThrow()
-    {
-        if (blocked)
-        {
-            throw new Exception("Blocked");
-        }
-    }
-    public static void CheckTimePausedAndThrow()
-    {
-        if (timePause)
-        {
-            throw new Exception("Time Paused");
-        }
-    }
 }
