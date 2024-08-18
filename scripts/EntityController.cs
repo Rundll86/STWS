@@ -8,13 +8,25 @@ public partial class EntityController : CharacterBody2D
 		WALK, STAND, SIT_ON_DOWN, SIT_ON_UP
 	}
 	[Export]
-	bool PlayerControllable;
+	public bool PlayerControllable;
 	[Export]
-	float Speed;
+	public float Speed;
 	public AnimatedSprite2D texture;
 	public CollisionShape2D hitbox;
 	public State state;
 	public bool eating;
+	public QueueObject queueObject;
+	public bool autoState = true;
+	public Promise<int> Move(Vector2 offset, int stepTime = 20)
+	{
+		autoState = false;
+		int stepTimes = (int)Math.Ceiling(offset.Length() / Speed);
+		Vector2 stepOffset = new(offset.X / stepTimes, offset.Y / stepTimes);
+		return TimeCalc.MethodCirculator(() =>
+		{
+			MoveAndCollide(stepOffset);
+		}, stepTime, stepTimes).Then(() => { autoState = true; });
+	}
 	public override void _Ready()
 	{
 		texture = GetNode<AnimatedSprite2D>("Texture");
@@ -30,7 +42,7 @@ public partial class EntityController : CharacterBody2D
 		if (state == State.WALK)
 		{
 			texture.Play("walk");
-			state = State.STAND;
+			if (autoState) state = State.STAND;
 		}
 		else if (state == State.STAND)
 		{
@@ -89,6 +101,11 @@ public partial class EntityController : CharacterBody2D
 					{
 						if (selected == 0)
 						{
+							if (Queues.GetQueueObject(index - 1, 0) != Common.PlayerQueueObject)
+							{
+								Mamba.WhatCanISayAsync("食堂大妈", "还没到你呢，后面排队去！");
+								return;
+							};
 							GD.Print("开始点菜");
 							Ordering.Open(index - 1);
 						}
@@ -96,7 +113,7 @@ public partial class EntityController : CharacterBody2D
 						{
 							GD.Print("取消点菜");
 						}
-						return null;
+						return;
 					});
 				}
 				else if (resultName.StartsWith("Chair"))
@@ -119,10 +136,10 @@ public partial class EntityController : CharacterBody2D
 							if (UserData.RealHadFoodsLength == 0)
 							{
 								Mamba.WhatCanISayAsync("", "你还没买饭呢，打算吃别人的？");
-								return null;
+								return;
 							}
 							GD.Print("开始用餐");
-							ThreadSleep.SleepAsync(100).Then((e) => { UserData.ShowEatingMessageBox(); return null; });
+							ThreadSleep.SleepAsync(100).Then((e) => { UserData.ShowEatingMessageBox(); return; });
 							Common.PlayerSprite.Position = Common.LastChair.GlobalPosition;
 							Common.PlayerSprite.state = State.SIT_ON_DOWN;
 							if ("ABCD".Contains(Common.LastChairType))
@@ -140,7 +157,7 @@ public partial class EntityController : CharacterBody2D
 						{
 							GD.Print("取消用餐");
 						}
-						return null;
+						return;
 					});
 				}
 				else if (resultName == "Tester")
@@ -186,17 +203,22 @@ public partial class EntityController : CharacterBody2D
 				}
 				else if (resultName == "QueueDetector")
 				{
-					CharacterBody2D npc000 = result.GetParent<CharacterBody2D>();
-					Mamba.WhatCanISayAsync(npc000.Name.ToString(), "喂，你想干嘛？", new string[] { "插队", "借过一下" }).Then(selected =>
+					CharacterBody2D npc = result.GetParent<CharacterBody2D>();
+					string npcName = npc.Name.ToString();
+					int npcID = int.Parse(npcName[^3..].TrimStart('0'));
+					int windowID = int.Parse(npc.GetParent().GetParent().Name.ToString()[^1..]);
+					GD.Print("queuing:" + npcID + " " + windowID);
+					Mamba.WhatCanISayAsync(npcName, "喂，你想干嘛？", new string[] { "插队", "借过一下", "没啥" }).Then(selected =>
 					{
-							if (selected == 0)
-							{
-								Mamba.WhatCanISayAsync("FallingShrimp", "测试角色对话框头像显示");
-							}
-							else
-							{
-								Mamba.WhatCanISayAsync("Kobe Bryant", "What can I say?Mamba out!");
-							}
+						GD.Print(selected);
+						if (selected == 0)
+						{
+							Queues.InsertToQueue(windowID - 1, Common.PlayerQueueObject, npcID);
+						}
+						else if (selected == 1)
+						{
+							Mamba.WhatCanISayAsync("Kobe Bryant", "What can I say?Mamba out!");
+						}
 					});
 				}
 			}

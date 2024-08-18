@@ -4,11 +4,11 @@ using System;
 public partial class PositionLock : Node2D
 {
 	[Export]
-	Node2D target;
+	public Node2D target;
 	[Export]
 	public Vector2 offset;
 	[Export]
-	bool enabledPositionLock;
+	public bool enabledPositionLock;
 	public override void _Process(double delta)
 	{
 		if (target != null && enabledPositionLock)

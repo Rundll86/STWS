@@ -23,15 +23,17 @@ public partial class Common : Node2D
     static public Sprite2D ExampleFoodCard;
     static public TextureRect ExampleFoodCardShow;
     static public Sprite2D ExampleProgressBlock;
+    static public EntityController ExampleNPC;
     static public Node2D TableController;
     static public Vector2 TablePositionOffset;
     static public Vector2 TableArrangement;
-    static public TileMap Map;
+    static public Node2D Map;
     static public StaticBody2D LastChair;
     static public string LastChairType;
     static public Vector2 EatingPositionOffset;
     static public Sprite2D FoodEatingAnimation;
     static public AnimationPlayer FoodEatingAnimationPlayer;
+    static public Random RandomNumberGenerator;
     static public string[] ShopTypes;
     static public T[] CreateArrayBy3Items<T>(T v1, T v2, T v3)
     {
@@ -89,7 +91,9 @@ public partial class Common : Node2D
     }
     public override void _Ready()
     {
+        RandomNumberGenerator = new Random();
         Food.Init();
+        Queues.Init();
         ShopTypes = new string[] { "糕点", "自选", "自选", "自选", "面食", "饭食" };
         ExampleTableGroup = GetNode<Node2D>("/root/WorldController/InitilizatorC/ExampleTableGroup");
         ExampleFoodCard = GetNode<Sprite2D>("/root/WorldController/InitilizatorC/ExampleFoodCard");
@@ -98,8 +102,11 @@ public partial class Common : Node2D
         ExampleFoodCardShow.GetParent().RemoveChild(ExampleFoodCardShow);
         ExampleProgressBlock = GetNode<Sprite2D>("/root/WorldController/InitilizatorC/ExampleProgressBlock");
         ExampleProgressBlock.GetParent().RemoveChild(ExampleProgressBlock);
-        PlayerSprite = GetNode<EntityController>("Map/Player");
-        PlayerQueueObject = new QueueObject() { entity = PlayerSprite };
+        ExampleNPC = GetNode<EntityController>("/root/WorldController/InitilizatorC/ExampleNPC");
+        ExampleNPC.GetParent().RemoveChild(ExampleNPC);
+        Map = GetNode<Node2D>("Map");
+        PlayerSprite = Map.GetNode<EntityController>("Player");
+        PlayerQueueObject = new QueueObject() { entity = PlayerSprite, queueID = -1 };
         SYHT = GD.Load<Font>("res://resources/syht.ttf");
         Unifont = GD.Load<Font>("res://resources/unifont.ttf");
         FoodIcon = GD.Load<Texture2D>("res://resources/foods/food.png");
@@ -111,7 +118,7 @@ public partial class Common : Node2D
         RandomFoodList = new FoodObject[0][];
         for (int i = 0; i < RandomFoodLengthList.Length; i++)
         {
-            GD.Print("LoadedWindow:" + i.ToString());
+            GD.Print("loading window:" + i.ToString());
             RandomFoodList = AppendItemToArray(
                 RandomFoodList,
                 PickRandomElements(
@@ -119,7 +126,20 @@ public partial class Common : Node2D
                     RandomFoodLengthList[i]
                 )
             );
-            StaticBody2D currentWindow = GetNode<StaticBody2D>("Map/Window" + (i + 1).ToString());
+            StaticBody2D currentWindow = Map.GetNode<StaticBody2D>("Window" + (i + 1).ToString());
+            Node2D queue = new() { Name = "Queue" };
+            currentWindow.AddChild(queue);
+            int queuerCount = RandomNumberGenerator.Next(0, 10);
+            for (int j = 0; j < queuerCount; j++)
+            {
+                EntityController currentNPC = (EntityController)ExampleNPC.Duplicate();
+                currentNPC.Name = "NPC" + j.ToString().PadLeft(3, '0');
+                currentNPC.Position += new Vector2(0, j * 42);
+                currentNPC.queueObject = new QueueObject() { entity = currentNPC, queueID = i };
+                currentNPC.Scale = PickRandomElements(new Vector2[] { new(-1, 1), new(1, 1) }, 1)[0];
+                queue.AddChild(currentNPC);
+                Queues.AddToQueue(i, currentNPC.queueObject);
+            }
             int currentLength = RandomFoodList[i].Length;
             for (int j = 0; j < currentLength; j++)
             {
@@ -135,8 +155,7 @@ public partial class Common : Node2D
         }
         Timer = GetNode<ProgressBar>("CameraMain/Timer");
         TimerAnimator = Timer.GetNode<AnimationPlayer>("Animator");
-        TableController = GetNode<Node2D>("Map/TableController");
-        Map = GetNode<TileMap>("Map");
+        TableController = Map.GetNode<Node2D>("TableController");
         TablePositionOffset = new Vector2(700, 400);
         EatingPositionOffset = new Vector2(0, -50);
         TableArrangement = new Vector2(6, 14);

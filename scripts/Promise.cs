@@ -53,7 +53,11 @@ public partial class Promise<R>
         ResolveChain = Common.RemoveItemFromArray(ResolveChain, Resolve0);
         Promise<R> result;
         try { result = Resolve0(data); } catch (Exception e) { return Reject(e); };
-        if (result == null) return this;
+        if (result == null)
+        {
+            if (ResolveChain.Length > 0) return Resolve(data);
+            else return this;
+        };
         result.ResolveChain = ResolveChain;
         result.RejectChain = RejectChain;
         return result;

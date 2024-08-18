@@ -1,5 +1,5 @@
 import pandas as pd
-import json
+import json, msvcrt
 
 
 def parse_taste(taste_str: str):
@@ -21,8 +21,10 @@ def parse_taste(taste_str: str):
 
 
 def csv_to_json(csv_file, json_file):
+    print("Reading database file: " + csv_file)
     df = pd.read_csv(csv_file)
     json_list = []
+    print("Mapping to JSON...")
     for _, row in df.iterrows():
         item = {
             "name": row["名称"],
@@ -39,9 +41,13 @@ def csv_to_json(csv_file, json_file):
         }
         json_list.append(item)
     with open(json_file, "w", encoding="utf-8") as f:
+        print("Writing JSON file: " + json_file)
         json.dump(json_list, f, ensure_ascii=False, indent=4)
 
 
 csv_file_path = "foods-database.csv"
 json_file_path = "foods-generated.json"
 csv_to_json(csv_file_path, json_file_path)
+print("Generated JSON file: " + json_file_path)
+print("Press any key to exit...")
+msvcrt.getch()

@@ -546,7 +546,7 @@
             "油": 3,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 7
     },
     {
@@ -568,7 +568,7 @@
             "油": 2,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 7
     },
     {
@@ -590,7 +590,7 @@
             "油": 2,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 7
     },
     {
@@ -612,7 +612,7 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 1
     },
     {
@@ -634,7 +634,7 @@
             "油": 1,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 7
     },
     {
@@ -656,7 +656,7 @@
             "油": 1,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 7
     },
     {
@@ -678,7 +678,7 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 7
     },
     {
@@ -700,7 +700,7 @@
             "油": 1,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 7
     },
     {
@@ -722,7 +722,7 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 7
     },
     {
