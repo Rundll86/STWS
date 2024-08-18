@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 public partial class Common : Node2D
 {
     static public EntityController PlayerSprite;
+    static public QueueObject PlayerQueueObject;
     static public Font SYHT;
     static public Font Unifont;
     static public Texture2D FoodIcon;
@@ -98,6 +99,7 @@ public partial class Common : Node2D
         ExampleProgressBlock = GetNode<Sprite2D>("/root/WorldController/InitilizatorC/ExampleProgressBlock");
         ExampleProgressBlock.GetParent().RemoveChild(ExampleProgressBlock);
         PlayerSprite = GetNode<EntityController>("Map/Player");
+        PlayerQueueObject = new QueueObject() { entity = PlayerSprite };
         SYHT = GD.Load<Font>("res://resources/syht.ttf");
         Unifont = GD.Load<Font>("res://resources/unifont.ttf");
         FoodIcon = GD.Load<Texture2D>("res://resources/foods/food.png");

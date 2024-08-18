@@ -1,5 +1,6 @@
 using Godot;
 using System;
-public partial class Queue : EntityController
+public partial class QueueObject : Node
 {
+    public EntityController entity;
 }

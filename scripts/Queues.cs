@@ -4,27 +4,27 @@ using System.Collections.Generic;
 using System.Linq;
 public partial class Queues : Node2D
 {
-	static EntityController[][] queues;
-	public static void AddToQueue(int queue, EntityController body)
+	static QueueObject[][] queues;
+	public static void AddToQueue(int queue, QueueObject body)
 	{
 		queues[queue] = queues[queue].Append(body).ToArray();
 	}
-	public static void InsertToQueue(int queue, EntityController body, int index)
+	public static void InsertToQueue(int queue, QueueObject body, int index)
 	{
-		List<EntityController> list = queues[queue].ToList();
+		List<QueueObject> list = queues[queue].ToList();
 		list.Insert(index, body);
 		queues[queue] = list.ToArray();
 	}
-	public static void LeaveQueue(int queue, EntityController body)
+	public static void LeaveQueue(int queue, QueueObject body)
 	{
 		queues[queue] = queues[queue].Where(x => x != body).ToArray();
 	}
 	public override void _Ready()
 	{
-		queues = new EntityController[6][];
+		queues = new QueueObject[6][];
 		for (int i = 0; i < 6; i++)
 		{
-			queues[i] = Array.Empty<EntityController>();
+			queues[i] = Array.Empty<QueueObject>();
 		}
 	}
 	public override void _Process(double delta)
