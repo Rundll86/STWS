@@ -35,6 +35,7 @@ public partial class Common : Node2D
     static public AnimationPlayer FoodEatingAnimationPlayer;
     static public Random RandomNumberGenerator;
     static public string[] ShopTypes;
+    static public float savedPlayerDefaultSpeed;
     static public T[] CreateArrayBy3Items<T>(T v1, T v2, T v3)
     {
         return new T[] { v1, v2, v3 };
@@ -106,7 +107,8 @@ public partial class Common : Node2D
         ExampleNPC.GetParent().RemoveChild(ExampleNPC);
         Map = GetNode<Node2D>("Map");
         PlayerSprite = Map.GetNode<EntityController>("Player");
-        PlayerQueueObject = new QueueObject() { entity = PlayerSprite, queueID = -1 };
+        savedPlayerDefaultSpeed = PlayerSprite.Speed;
+        PlayerQueueObject = new QueueObject() { entity = PlayerSprite };
         SYHT = GD.Load<Font>("res://resources/syht.ttf");
         Unifont = GD.Load<Font>("res://resources/unifont.ttf");
         FoodIcon = GD.Load<Texture2D>("res://resources/foods/food.png");
@@ -133,12 +135,10 @@ public partial class Common : Node2D
             for (int j = 0; j < queuerCount; j++)
             {
                 EntityController currentNPC = (EntityController)ExampleNPC.Duplicate();
-                currentNPC.Name = "NPC" + j.ToString().PadLeft(3, '0');
+                currentNPC.Name = "NPC" + (j + 1).ToString().PadLeft(3, '0');
                 currentNPC.Position += new Vector2(0, j * 42);
-                currentNPC.queueObject = new QueueObject() { entity = currentNPC, queueID = i };
                 currentNPC.Scale = PickRandomElements(new Vector2[] { new(-1, 1), new(1, 1) }, 1)[0];
                 queue.AddChild(currentNPC);
-                Queues.AddToQueue(i, currentNPC.queueObject);
             }
             int currentLength = RandomFoodList[i].Length;
             for (int j = 0; j < currentLength; j++)

@@ -1,6 +1,6 @@
 using Godot;
 using System.Threading.Tasks;
-
+using FallingShrimp.FrontBridge;
 public partial class ThreadSleep : Node2D
 {
 	public delegate void SleepCallback();

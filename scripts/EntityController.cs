@@ -1,6 +1,6 @@
 using Godot;
 using System;
-
+using FallingShrimp.FrontBridge;
 public partial class EntityController : CharacterBody2D
 {
 	public enum State
@@ -15,15 +15,17 @@ public partial class EntityController : CharacterBody2D
 	public CollisionShape2D hitbox;
 	public State state;
 	public bool eating;
-	public QueueObject queueObject;
 	public bool autoState = true;
 	public Promise<int> Move(Vector2 offset, int stepTime = 20)
 	{
+		GD.Print("moving to (" + offset.X + ", " + offset.Y + ")");
 		autoState = false;
 		int stepTimes = (int)Math.Ceiling(offset.Length() / Speed);
 		Vector2 stepOffset = new(offset.X / stepTimes, offset.Y / stepTimes);
+		GD.Print(stepOffset, stepTimes);
 		return TimeCalc.MethodCirculator(() =>
 		{
+			GD.Print("test");
 			MoveAndCollide(stepOffset);
 		}, stepTime, stepTimes).Then(() => { autoState = true; });
 	}
@@ -101,13 +103,15 @@ public partial class EntityController : CharacterBody2D
 					{
 						if (selected == 0)
 						{
-							if (Queues.GetQueueObject(index - 1, 0) != Common.PlayerQueueObject)
+							if (Queues.GetQueueObject(index - 1).entity == Common.PlayerQueueObject.entity)
+							{
+								GD.Print("开始点菜");
+								Ordering.Open(index - 1);
+							}
+							else
 							{
 								Mamba.WhatCanISayAsync("食堂大妈", "还没到你呢，后面排队去！");
-								return;
 							};
-							GD.Print("开始点菜");
-							Ordering.Open(index - 1);
 						}
 						else if (selected == 1)
 						{
@@ -160,60 +164,19 @@ public partial class EntityController : CharacterBody2D
 						return;
 					});
 				}
-				else if (resultName == "Tester")
-				{
-					Mamba.WhatCanISayAsync("一个角色", "测试角色说话对话框").Then(e =>
-					{
-						return Mamba.WhatCanISayAsync("一个角色", "你吃饭了吗？", new string[] { "吃过了", "还没吃" });
-					}).Then(selected =>
-					{
-						if (selected == 0)
-						{
-							return Mamba.WhatCanISayAsync("一个角色", "那没事了。");
-						}
-						else if (selected == 1)
-						{
-							return Mamba.WhatCanISayAsync("一个角色", "那还等什么，赶紧去吃啊！");
-						}
-						return null;
-					});
-				}
-				else if (resultName == "Tester2")
-				{
-					Mamba.WhatCanISayAsync("", "测试系统说话对话框").Then(() =>
-					{
-						Mamba.WhatCanISayAsync("", "Man!What can I say???");
-					}).Then(() =>
-					{
-						return Mamba.WhatCanISayAsync("", "Where's my HELICOPTER???", new string[] { "In the sky.", "In the ground." });
-					}).Then((e) =>
-					{
-						GD.Print(e);
-						Mamba.WhatCanISayAsync("", "No!Your mother is dead!!!");
-					}).Then(() =>
-					{
-						Mamba.WhatCanISayAsync("", "测试对话框（Promise）");
-					}).Then(() =>
-					{
-						return Mamba.WhatCanISayAsync("", "选择一个选项", new string[] { "选项一", "选项二", "选项三" });
-					}).Then((e) =>
-					{
-						Mamba.WhatCanISayAsync("", "你刚才选择了选项[" + (e + 1).ToString() + "]");
-					});
-				}
 				else if (resultName == "QueueDetector")
 				{
-					CharacterBody2D npc = result.GetParent<CharacterBody2D>();
+					EntityController npc = result.GetParent<EntityController>();
 					string npcName = npc.Name.ToString();
 					int npcID = int.Parse(npcName[^3..].TrimStart('0'));
 					int windowID = int.Parse(npc.GetParent().GetParent().Name.ToString()[^1..]);
-					GD.Print("queuing:" + npcID + " " + windowID);
 					Mamba.WhatCanISayAsync(npcName, "喂，你想干嘛？", new string[] { "插队", "借过一下", "没啥" }).Then(selected =>
 					{
 						GD.Print(selected);
 						if (selected == 0)
 						{
-							Queues.InsertToQueue(windowID - 1, Common.PlayerQueueObject, npcID);
+							GD.Print("在窗口" + windowID + "的NPC" + npcID + "的位置插队");
+							npc.Move(new Vector2(0, 42));
 						}
 						else if (selected == 1)
 						{

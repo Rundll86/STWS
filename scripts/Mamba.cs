@@ -1,6 +1,6 @@
 using Godot;
 using System;
-
+using FallingShrimp.FrontBridge;
 public partial class Mamba : TextureRect
 {
 	private static Action _savedCallback;
@@ -13,6 +13,7 @@ public partial class Mamba : TextureRect
 	public static TextureButton ExampleOption;
 	public static AnimationPlayer Animator;
 	public static Label MambaCharacter;
+	public static string[] savedOptions;
 	public override void _Ready()
 	{
 		MambaBox = this;
@@ -71,6 +72,7 @@ public partial class Mamba : TextureRect
 			}
 			else
 			{
+				savedOptions = options;
 				for (int i = 0; i < options.Length; i++)
 				{
 					int savedI = i;

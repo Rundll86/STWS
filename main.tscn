@@ -1,4 +1,4 @@
-[gd_scene load_steps=84 format=4 uid="uid://2rhy8ig4wj6f"]
+[gd_scene load_steps=83 format=4 uid="uid://2rhy8ig4wj6f"]
 
 [ext_resource type="Script" path="res://scripts/Common.cs" id="1_6yr48"]
 [ext_resource type="Script" path="res://scripts/UserData.cs" id="2_vxk2j"]
@@ -27,8 +27,8 @@
 [ext_resource type="Script" path="res://scripts/AnimationPlayStart.cs" id="15_s43lv"]
 [ext_resource type="Texture2D" uid="uid://bjs6xw7t8qu7p" path="res://resources/foods/food.png" id="20_1eqdv"]
 [ext_resource type="TileSet" uid="uid://daxacsk4o33f7" path="res://commons/tileMap.tres" id="25_q1l7u"]
+[ext_resource type="Script" path="res://scripts/Test.cs" id="26_3v4l1"]
 [ext_resource type="Script" path="res://scripts/PositionLimiter.cs" id="26_gw3hb"]
-[ext_resource type="Texture2D" uid="uid://ve31eduwrt2g" path="res://resources/test.png" id="30_rmocv"]
 [ext_resource type="Script" path="res://scripts/Mamba.cs" id="33_dlda0"]
 [ext_resource type="FontFile" uid="uid://4o5vpchlji6q" path="res://resources/xssh.ttf" id="35_p4s1f"]
 [ext_resource type="Texture2D" uid="uid://4ynkc3v8gqah" path="res://resources/talkingbox/character.png" id="38_hy230"]
@@ -400,9 +400,6 @@ _data = {
 "show-down": SubResource("Animation_bigo3"),
 "show-up": SubResource("Animation_ytn4w")
 }
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_0qeoh"]
-size = Vector2(201, 198)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8ssit"]
 bg_color = Color(0.00761212, 0.583757, 0.194585, 1)
@@ -953,6 +950,7 @@ events = [SubResource("InputEventKey_wfgk0")]
 events = [SubResource("InputEventKey_wfgk0")]
 
 [node name="WorldController" type="Node2D"]
+auto_translate_mode = 1
 script = ExtResource("1_6yr48")
 
 [node name="InitilizatorA" type="Node2D" parent="."]
@@ -1294,6 +1292,8 @@ polygon = PackedVector2Array(-24, 40, 0, 30, 24, 40)
 position = Vector2(0, 25)
 polygon = PackedVector2Array(-24, 40, 0, 50, 24, 40)
 
+[node name="InitilizatorD" type="Node2D" parent="."]
+
 [node name="Map" type="Node2D" parent="."]
 y_sort_enabled = true
 
@@ -1464,7 +1464,7 @@ position = Vector2(2000, 0)
 motion_mode = 1
 script = ExtResource("3_t6uh5")
 PlayerControllable = true
-Speed = 30.0
+Speed = 2.6
 
 [node name="Texture" type="AnimatedSprite2D" parent="Map/Player"]
 position = Vector2(0, -43.51)
@@ -1486,26 +1486,6 @@ texture = ExtResource("20_1eqdv")
 libraries = {
 "": SubResource("AnimationLibrary_yofw7")
 }
-
-[node name="Tester" type="StaticBody2D" parent="Map"]
-position = Vector2(1712, -496)
-
-[node name="Sprite2D" type="Sprite2D" parent="Map/Tester"]
-texture = ExtResource("30_rmocv")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Map/Tester"]
-position = Vector2(0.5, 0)
-shape = SubResource("RectangleShape2D_0qeoh")
-
-[node name="Tester2" type="StaticBody2D" parent="Map"]
-position = Vector2(1960, -808)
-
-[node name="Sprite2D" type="Sprite2D" parent="Map/Tester2"]
-texture = ExtResource("30_rmocv")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Map/Tester2"]
-position = Vector2(0.5, 0)
-shape = SubResource("RectangleShape2D_0qeoh")
 
 [node name="地板" type="TileMapLayer" parent="Map"]
 z_index = -1
@@ -1543,6 +1523,9 @@ y_sort_enabled = true
 tile_map_data = PackedByteArray("AAADABgABAAAAAAAAAAOAP//AQAAAAAAAAAOAAEAAgAAAAAAAAA=")
 tile_set = ExtResource("25_q1l7u")
 metadata/_edit_lock_ = true
+
+[node name="Node2D" type="Node2D" parent="Map"]
+script = ExtResource("26_3v4l1")
 
 [node name="CameraMain" type="Camera2D" parent="." node_paths=PackedStringArray("target")]
 script = ExtResource("26_gw3hb")

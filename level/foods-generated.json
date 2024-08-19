@@ -436,7 +436,7 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 6
     },
     {
@@ -458,7 +458,7 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 7
     },
     {
@@ -480,7 +480,7 @@
             "油": 0,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 1
     },
     {
@@ -502,11 +502,11 @@
             "油": 2,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 1
     },
     {
-        "name": "烤冷面",
+        "name": "烤面筋",
         "value": 1,
         "bdz": 1,
         "vc": 0,
@@ -524,7 +524,7 @@
             "油": 3,
             "清淡": 0
         },
-        "haveAvatar": false,
+        "haveAvatar": true,
         "classify": 5
     },
     {

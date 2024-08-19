@@ -1,6 +1,6 @@
 using Godot;
 using System;
-
+using FallingShrimp.FrontBridge;
 public partial class TimeCalc : Node2D
 {
 	public static long StartTime;
