@@ -178,6 +178,7 @@ public partial class Common : Node2D
         ExampleTableGroup.QueueFree();
         FoodEatingAnimation = PlayerSprite.GetNode<Sprite2D>("Food/FoodEating");
         FoodEatingAnimationPlayer = FoodEatingAnimation.GetNode<AnimationPlayer>("Animator");
+        GD.Print(ProjectSettings.GlobalizePath("user://saved.json"));
     }
     public override void _Process(double delta)
     {
